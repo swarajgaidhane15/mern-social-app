@@ -1,11 +1,10 @@
 const User = require("../models/user");
 const Post = require("../models/post");
 const bcrypt = require("bcrypt");
-const config = require("config");
 const jwt = require("jsonwebtoken");
 const sgMail = require("@sendgrid/mail");
 
-sgMail.setApiKey(config.get("nodemailer_api"));
+sgMail.setApiKey(process.env.nodemailer_api);
 
 const ValidateEmail = (email) => {
   var emailformat =
@@ -57,7 +56,7 @@ module.exports.signup = (req, res) => {
       user
         .save()
         .then((user) => {
-          const token = jwt.sign({ id: user._id }, config.get("jwt_secret"));
+          const token = jwt.sign({ id: user._id }, process.env.jwt_secret);
 
           user.password = undefined;
 
@@ -75,14 +74,14 @@ module.exports.signup = (req, res) => {
             user,
           });
 
-          sgMail
-            .send(msg)
-            .then(() => {
-              console.log("Email sent");
-            })
-            .catch((error) => {
-              console.error(error);
-            });
+          // sgMail
+          //   .send(msg)
+          //   .then(() => {
+          //     console.log("Email sent");
+          //   })
+          //   .catch((error) => {
+          //     console.error(error);
+          //   });
         })
         .catch((err) =>
           res.status(500).json({ error: true, msg: "Could not create user" })
@@ -114,7 +113,7 @@ module.exports.login = (req, res) => {
             .json({ error: true, msg: "Invalid Credentials" });
       });
 
-      const token = jwt.sign({ id: user._id }, config.get("jwt_secret"));
+      const token = jwt.sign({ id: user._id }, process.env.jwt_secret);
 
       user.password = undefined;
 

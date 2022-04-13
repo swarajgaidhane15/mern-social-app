@@ -2,4 +2,4 @@
   "dbURI": "mongodb+srv://wanda:wanda@cluster0.pps9g.mongodb.net/social?retryWrites=true&w=majority",
   "jwt_secret": "wandavision",
   "nodemailer_api": "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",
-};
+}

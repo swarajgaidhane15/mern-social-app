@@ -5,3 +5,5 @@ git
 client/node_modules
 client/package-lock.json
 .env
+config/config.env
+config/default.json

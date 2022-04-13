@@ -1,7 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
-const config = require("config");
+const dotenv = require("dotenv");
+
+dotenv.config({ path: "./config/config.env" });
 
 const app = express();
 app.use(express.json());
@@ -23,7 +25,7 @@ if (process.env.NODE_ENV == "production") {
   });
 }
 
-const dbURI = config.get("dbURI");
+const dbURI = process.env.dbURI;
 
 const PORT = process.env.PORT || 5000;
 

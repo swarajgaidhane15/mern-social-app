@@ -1,4 +1,3 @@
-const config = require("config");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 
@@ -11,7 +10,7 @@ function auth(req, res, next) {
 
   try {
     //   Verify token
-    const decoded = jwt.verify(token, config.get("jwt_secret"));
+    const decoded = jwt.verify(token, process.env.jwt_secret);
 
     // Add user from payload
     User.findById(decoded.id)
