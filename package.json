@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "A simple social-media alike web app built on top of MERN Stack...",
   "main": "server.js",
-  "proxy": "http://localhost:3000",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
