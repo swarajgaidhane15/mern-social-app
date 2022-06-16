@@ -37,5 +37,3 @@ mongoose
     app.listen(PORT, () => console.log(`Server started on PORT ${PORT}`))
   )
   .catch((err) => console.log(err));
-
-// "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client",
