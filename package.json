@@ -11,7 +11,7 @@
     "start": "node server.js",
     "server": "nodemon server.js",
     "client": "npm start --prefix client",
-    "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm install react-animated-heart && npm run build",
+    "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build",
     "dev": "concurrently \"npm run start\" \"npm run client\" "
   },
   "repository": {
