@@ -4,14 +4,14 @@
   "description": "A simple social-media alike web app built on top of MERN Stack...",
   "main": "server.js",
   "engines": {
-    "node": "16.x"
+    "node": "14.x"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "server": "nodemon server.js",
     "client": "npm start --prefix client",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client",
+    "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build",
     "dev": "concurrently \"npm run start\" \"npm run client\" "
   },
   "repository": {

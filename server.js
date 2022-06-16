@@ -1,9 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
-const dotenv = require("dotenv");
-
-dotenv.config({ path: "./config/config.env" });
+require("dotenv").config();
 
 const app = express();
 app.use(express.json());
@@ -39,3 +37,5 @@ mongoose
     app.listen(PORT, () => console.log(`Server started on PORT ${PORT}`))
   )
   .catch((err) => console.log(err));
+
+// "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client",
