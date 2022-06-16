@@ -14,7 +14,7 @@ import {
 } from "reactstrap";
 import { Link } from "react-router-dom";
 
-import Heart from "react-animated-heart";
+// import Heart from "react-animated-heart";
 import Comments from "../components/Comments";
 
 const Home = () => {
