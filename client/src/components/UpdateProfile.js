@@ -125,7 +125,6 @@ const UpdateProfile = ({ sentData, changeUser, changeProfile }) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        (data);
         localStorage.removeItem("user");
         localStorage.removeItem("socio_token");
         dispatch({ type: "CLEAR" });
