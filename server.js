@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
-require("dotenv").config();
+const { dbURI } = require('./config/keys');
 
 const app = express();
 app.use(express.json());

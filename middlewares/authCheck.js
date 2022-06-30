@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
+const { jwt_secret } = require('../config/keys');
 
 function auth(req, res, next) {
   const token = req.header("x-auth-token");
@@ -10,7 +11,7 @@ function auth(req, res, next) {
 
   try {
     //   Verify token
-    const decoded = jwt.verify(token, process.env.jwt_secret);
+    const decoded = jwt.verify(token, jwt_secret);
 
     // Add user from payload
     User.findById(decoded.id)

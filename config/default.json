@@ -1,5 +1,5 @@
 {
-  "dbURI": "YOUR_DATABASE_URI",
-  "jwt_secret": "YOUR_JWT_SECRET",
-  "nodemailer_api": "YOUR_NODEMAILER_API"
+  "dbURI": "process.env.dbURI",
+  "jwt_secret": "process.env.jwt_secret",
+  "nodemailer_api": "process.env.nodemailer_api"
 }

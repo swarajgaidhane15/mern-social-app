@@ -3,8 +3,9 @@ const Post = require("../models/post");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sgMail = require("@sendgrid/mail");
+const { jwt_secret, nodemailer_api } = require('../config/keys');
 
-sgMail.setApiKey(process.env.nodemailer_api);
+sgMail.setApiKey(nodemailer_api);
 
 const ValidateEmail = (email) => {
   var emailformat =
@@ -56,7 +57,7 @@ module.exports.signup = (req, res) => {
       user
         .save()
         .then((user) => {
-          const token = jwt.sign({ id: user._id }, process.env.jwt_secret);
+          const token = jwt.sign({ id: user._id }, jwt_secret);
 
           user.password = undefined;
 
@@ -113,7 +114,7 @@ module.exports.login = (req, res) => {
             .json({ error: true, msg: "Invalid Credentials" });
       });
 
-      const token = jwt.sign({ id: user._id }, process.env.jwt_secret);
+      const token = jwt.sign({ id: user._id }, jwt_secret);
 
       user.password = undefined;
 
