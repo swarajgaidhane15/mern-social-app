@@ -28,7 +28,6 @@ const Comments = ({ comments, postId }) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("Commented");
         setComment("");
       })
       .catch((err) => console.log(err));

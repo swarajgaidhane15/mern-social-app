@@ -102,7 +102,6 @@ const Auth = () => {
       })
       .catch((err) => {
         setLoading(false);
-        console.log("Error");
       });
   };
 

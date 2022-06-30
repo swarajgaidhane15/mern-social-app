@@ -13,8 +13,6 @@ import {
 } from "reactstrap";
 
 const CreatePost = () => {
-  useEffect(() => console.log("CREATE_POST"), []);
-
   const [visible, setVisible] = useState(false);
   const onDismiss = () => setVisible(false);
   const [error, setError] = useState("");
@@ -94,12 +92,10 @@ const CreatePost = () => {
       .then((res) => res.json())
       .then((data) => {
         setLoading(false);
-        console.log(data);
         toggle();
       })
       .catch((err) => {
         setLoading(false);
-        console.log(err);
       });
   };
 
