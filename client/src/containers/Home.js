@@ -14,7 +14,7 @@ import {
 } from "reactstrap";
 import { Link } from "react-router-dom";
 
-import Heart from "react-animated-heart";
+// import Heart from "react-animated-heart";
 import Comments from "../components/Comments";
 
 const Home = () => {
@@ -168,12 +168,25 @@ const Home = () => {
                   </CardText>
 
                   <div className="d-flex justify-content-between align-items-center">
-                    <Heart
+                    {/* <Heart
                       isClick={post.likes.includes(user._id)}
                       onClick={() =>
                         likeDislike(post._id, post.likes.includes(user._id))
                       }
-                    />
+                    /> */}
+                    {post.likes.includes(user.id) ? (
+                    <i
+                      className="fas fa-2x my-1 fa-heart"
+                      style={{ color: "red", cursor: "pointer" }}
+                      onClick={() => likeDislike(post._id, "dislike")}
+                    ></i>
+                  ) : (
+                    <i
+                      className="far fa-2x my-1 fa-heart"
+                      style={{ color: "red", cursor: "pointer" }}
+                      onClick={() => likeDislike(post._id, "like")}
+                    ></i>
+                  )}
 
                     <CardText className="fs-6 mt-2" style={{ color: "gray" }}>
                       {post.likes.length} likes · {post.comments.length}{" "}
