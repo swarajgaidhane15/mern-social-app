@@ -23,8 +23,6 @@ if (process.env.NODE_ENV == "production") {
   });
 }
 
-const dbURI = process.env.dbURI;
-
 const PORT = process.env.PORT || 5000;
 
 mongoose
