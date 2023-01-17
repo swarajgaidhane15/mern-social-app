@@ -193,20 +193,6 @@ const Home = () => {
                     </CardText>
                   </div>
 
-                  {/* {post.likes.includes(user.id) ? (
-                    <i
-                      className="fas fa-2x my-1 fa-heart"
-                      style={{ color: "red", cursor: "pointer" }}
-                      onClick={() => likeDislike(post._id, "dislike")}
-                    ></i>
-                  ) : (
-                    <i
-                      className="far fa-2x my-1 fa-heart"
-                      style={{ color: "red", cursor: "pointer" }}
-                      onClick={() => likeDislike(post._id, "like")}
-                    ></i>
-                  )} */}
-
                   {/* Add Comment */}
                   <Form
                     onSubmit={(e) => {
