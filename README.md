@@ -1,7 +1,6 @@
 # Socio - Social Networking site
 
-Live Demo here - [Click me](https://socioty.herokuapp.com/profile)
-(Note : Since this project is hosted on Heroku, it might get removed due to Heroku's new policy. Apologies 🙇‍🙇🏻)
+Live Demo here - [Click me](https://mern-social-app-kappa.vercel.app/profile)
 
 ![image](https://user-images.githubusercontent.com/52031837/203636232-0e4029aa-397a-4905-8a4c-a34d1be4b04a.png)
 
