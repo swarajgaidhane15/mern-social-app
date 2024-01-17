@@ -19,12 +19,12 @@ import Comments from "../components/Comments";
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
+  const [user] = useState(JSON.parse(localStorage.getItem("user")));
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const toggleDropdown = () => setDropdownOpen((prevState) => !prevState);
 
-  useEffect(() => getPosts(), [posts]);
+  useEffect(() => getPosts(), [user]);
 
   const getPosts = async () => {
     await fetch("/post", {
@@ -50,7 +50,8 @@ const Home = () => {
       body: JSON.stringify({ postId: postId }),
     })
       .then((res) => res.json())
-      .then((data) => console.log("L"));
+      .then(() => 1)
+      .catch((err) => console.log(err));
   };
 
   const addComment = async (text, postId) => {
@@ -67,9 +68,7 @@ const Home = () => {
         }),
       })
         .then((res) => res.json())
-        .then((data) => {
-          console.log("C");
-        })
+        .then(() => 1)
         .catch((err) => console.log(err));
     }
   };
@@ -82,7 +81,8 @@ const Home = () => {
       },
     })
       .then((res) => res.json())
-      .then((data) => {
+      .then(() => {
+        getPosts();
         toggleDropdown();
       })
       .catch((err) => console.log(err));
@@ -155,7 +155,7 @@ const Home = () => {
                       style={{ maxWidth: "100%", maxHeight: "500px" }}
                       alt="Image"
                       onDoubleClick={() =>
-                        likeDislike(post._id, post.likes.includes(user._id))
+                        likeDislike(post._id, post.likes.includes(user._id) ? "dislike" : "like")
                       }
                     />
                   </div>
@@ -174,18 +174,28 @@ const Home = () => {
                       }
                     /> */}
                     {post.likes.includes(user.id) ? (
-                    <i
-                      className="fas fa-2x my-1 fa-heart"
-                      style={{ color: "red", cursor: "pointer" }}
-                      onClick={() => likeDislike(post._id, "dislike")}
-                    ></i>
-                  ) : (
-                    <i
-                      className="far fa-2x my-1 fa-heart"
-                      style={{ color: "red", cursor: "pointer" }}
-                      onClick={() => likeDislike(post._id, "like")}
-                    ></i>
-                  )}
+                      // <i
+                      //   className="fas fa-2x my-1 fa-heart"
+                      //   style={{ color: "red", cursor: "pointer" }}
+                      //   onClick={() => likeDislike(post._id, "dislike")}
+                      // ></i>
+                      <img
+                        src="/heart-fill.svg"
+                        alt="Liked"
+                        onClick={() => likeDislike(post._id, "dislike")}
+                      />
+                    ) : (
+                      // <i
+                      //   className="far fa-2x my-1 fa-heart"
+                      //   style={{ color: "red", cursor: "pointer" }}
+                      //   onClick={() => likeDislike(post._id, "like")}
+                      // ></i>
+                      <img
+                        src="/heart-outline.svg"
+                        alt="Liked"
+                        onClick={() => likeDislike(post._id, "like")}
+                      />
+                    )}
 
                     <CardText className="fs-6 mt-2" style={{ color: "gray" }}>
                       {post.likes.length} likes · {post.comments.length}{" "}
