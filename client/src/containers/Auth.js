@@ -10,14 +10,13 @@ import {
   Card,
   CardText,
   CardBody,
-  CardSubtitle,
   CardTitle,
   Alert,
 } from "reactstrap";
-import { UserContext } from "../App";
+import { AppContext } from "../App";
 
 const Auth = () => {
-  const { state, dispatch } = useContext(UserContext);
+  const { dispatch } = useContext(AppContext);
   const history = useHistory();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -100,7 +99,7 @@ const Auth = () => {
         }
         setLoading(false);
       })
-      .catch((err) => {
+      .catch(() => {
         setLoading(false);
       });
   };
@@ -134,117 +133,112 @@ const Auth = () => {
             {response.msg}
           </Alert>
 
-          <CardText>
-            <Form>
-              {!isLogin ? (
-                <Fade in={!isLogin}>
-                  <FormGroup className="my-4">
-                    <Label htmlFor="name" className="mb-2">
-                      Name
-                    </Label>
-                    <Input
-                      style={inputStyle}
-                      type="text"
-                      name="name"
-                      id="name"
-                      placeholder="Enter name"
-                      value={user.name}
-                      onChange={onChange}
-                    />
-                  </FormGroup>
-                </Fade>
-              ) : null}
+          <Form>
+            {!isLogin ? (
+              <Fade in={!isLogin}>
+                <FormGroup className="my-4">
+                  <Label htmlFor="name" className="mb-2">
+                    Name
+                  </Label>
+                  <Input
+                    style={inputStyle}
+                    type="text"
+                    name="name"
+                    id="name"
+                    placeholder="Enter name"
+                    value={user.name}
+                    onChange={onChange}
+                  />
+                </FormGroup>
+              </Fade>
+            ) : null}
 
-              <FormGroup className="my-4">
-                <Label htmlFor="email" className="mb-2">
-                  Email
-                </Label>
-                <Input
-                  style={inputStyle}
-                  type="email"
-                  name="email"
-                  id="email"
-                  placeholder="Enter email"
-                  value={user.email}
-                  onChange={onChange}
-                />
-              </FormGroup>
+            <FormGroup className="my-4">
+              <Label htmlFor="email" className="mb-2">
+                Email
+              </Label>
+              <Input
+                style={inputStyle}
+                type="email"
+                name="email"
+                id="email"
+                placeholder="Enter email"
+                value={user.email}
+                onChange={onChange}
+              />
+            </FormGroup>
 
-              <FormGroup className="my-4">
-                <Label htmlFor="password" className="mb-2">
-                  Password
-                </Label>
-                <Input
-                  type={showPassword ? "text" : "password"}
-                  style={inputStyle}
-                  name="password"
-                  id="password"
-                  placeholder="Enter password"
-                  value={user.password}
-                  onChange={onChange}
-                />
-                <Label
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="text-muted float-end  mt-1"
-                  style={{ fontSize: "12px", cursor: "pointer" }}
-                >
-                  {!showPassword ? "Show Password" : "Hide Password"}
-                </Label>
-              </FormGroup>
+            <FormGroup className="my-4">
+              <Label htmlFor="password" className="mb-2">
+                Password
+              </Label>
+              <Input
+                type={showPassword ? "text" : "password"}
+                style={inputStyle}
+                name="password"
+                id="password"
+                placeholder="Enter password"
+                value={user.password}
+                onChange={onChange}
+              />
+              <Label
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-muted float-end pointer mt-1"
+                style={{ fontSize: "12px" }}
+              >
+                {!showPassword ? "Show Password" : "Hide Password"}
+              </Label>
+            </FormGroup>
 
-              {!isLogin ? (
-                <Fade in={!isLogin}>
-                  <FormGroup className="my-4">
-                    <Label htmlFor="name" className="mb-2">
-                      Choose Profile Picture
-                    </Label>
-                    <input
-                      type="file"
-                      className="my-3 form-control bg-dark text-white"
-                      name="file"
-                      id="file"
-                      onChange={(e) => setFile(e.target.files[0])}
-                    />
-                  </FormGroup>
-                </Fade>
-              ) : null}
+            {!isLogin ? (
+              <Fade in={!isLogin}>
+                <FormGroup className="my-4">
+                  <Label htmlFor="name" className="mb-2">
+                    Choose Profile Picture
+                  </Label>
+                  <input
+                    type="file"
+                    className="my-3 form-control bg-dark text-white"
+                    name="file"
+                    id="file"
+                    onChange={(e) => setFile(e.target.files[0])}
+                  />
+                </FormGroup>
+              </Fade>
+            ) : null}
 
-              <Button disabled={loading} color="primary" onClick={postDetails}>
-                {isLogin ? "Login" : "Register"}
-              </Button>
-            </Form>
-          </CardText>
+            <Button disabled={loading} color="primary" onClick={postDetails}>
+              {isLogin ? "Login" : "Register"}
+            </Button>
+          </Form>
 
-          <CardSubtitle tag="h6" className="my-2 text-muted d-flex flex-wrap ">
+          <CardText
+            className="my-3 d-flex flex-wrap"
+            style={{ fontSize: "16px" }}
+          >
             {isLogin ? (
               <>
                 Don't have an account ?
-                <span>
-                  <p
-                    className="text-primary mx-1"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => setIsLogin(!isLogin)}
-                  >
-                    Register
-                  </p>
+                <span
+                  className="text-primary mx-1 pointer"
+                  onClick={() => setIsLogin(!isLogin)}
+                >
+                  Register
                 </span>
               </>
             ) : (
               <>
                 Already have an account ?
-                <span>
-                  <p
-                    className="text-primary mx-1"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => setIsLogin(!isLogin)}
-                  >
-                    Login
-                  </p>
+                <span
+                  className="text-primary mx-1 pointer"
+                  onClick={() => setIsLogin(!isLogin)}
+                >
+                  Login
                 </span>
                 here
               </>
             )}
-          </CardSubtitle>
+          </CardText>
         </CardBody>
       </Card>
     </div>

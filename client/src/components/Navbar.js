@@ -1,9 +1,8 @@
-import React, { useContext, useState } from "react";
+import React, { Fragment, useState, useContext } from "react";
 import {
   Collapse,
   Navbar,
   NavbarToggler,
-  NavbarBrand,
   Nav,
   NavItem,
   NavLink,
@@ -11,15 +10,17 @@ import {
 import { Link, useHistory } from "react-router-dom";
 
 import CreatePost from "../components/CreatePost";
-import { UserContext } from "../App";
+import { AppContext } from "../App";
 
-const NavbarComponent = (props) => {
+const NavbarComponent = () => {
   const history = useHistory();
-
+  const {
+    state: { user },
+    dispatch,
+  } = useContext(AppContext);
   const [isOpen, setIsOpen] = useState(false);
-  const toggle = () => setIsOpen(!isOpen);
 
-  const { state, dispatch } = useContext(UserContext);
+  const toggle = () => setIsOpen(!isOpen);
 
   const logout = () => {
     localStorage.removeItem("socio_token");
@@ -31,69 +32,61 @@ const NavbarComponent = (props) => {
 
   return (
     <Navbar className="px-4 navbar" color="dark" dark expand="md">
-      <NavbarBrand
-        className="socio"
-        style={{
-          margin: 0,
-          padding: 0,
-          fontSize: "40px",
-        }}
-      >
-        <span className="d-flex">
-          <Link
-            className="text-decoration-none text-white"
-            to={state ? "/" : "/auth"}
-          >
-            Socio
-          </Link>
-          {state ? <CreatePost /> : null}
-        </span>
-      </NavbarBrand>
+      <span className="d-flex align-items-center">
+        <Link
+          className="socio text-decoration-none text-white"
+          to={user ? "/" : "/auth"}
+          style={{
+            margin: 0,
+            padding: 0,
+            fontSize: "40px",
+          }}
+        >
+          Socio
+        </Link>
+        {user ? <CreatePost /> : null}
+      </span>
       <NavbarToggler onClick={toggle} />
       <Collapse isOpen={isOpen} navbar>
-        <Nav className="justify-content-end" style={{ width: "100%" }} navbar>
-          {state ? (
-            <>
+        <Nav
+          className="d-flex align-items-center justify-content-end"
+          style={{ width: "100%" }}
+          navbar
+        >
+          {user ? (
+            <Fragment>
               <NavItem>
-                <NavLink>
-                  <Link
-                    className="text-decoration-none text-white me-4"
-                    to="/profile"
-                  >
-                    {JSON.parse(localStorage.getItem("user")).name}
-                  </Link>
-                </NavLink>
+                <Link
+                  className="text-decoration-none text-white me-4"
+                  to="/profile"
+                >
+                  {JSON.parse(localStorage.getItem("user")).name}
+                </Link>
               </NavItem>
 
               <NavItem>
-                <NavLink>
-                  <Link
-                    to="/following/posts"
-                    className="text-decoration-none text-white fw-bolder me-4"
-                  >
-                    Following
-                  </Link>
-                </NavLink>
+                <Link
+                  to="/following/posts"
+                  className="text-decoration-none text-white fw-bolder me-4"
+                >
+                  Following
+                </Link>
               </NavItem>
 
               <NavItem>
-                <NavLink>
-                  <Link
-                    onClick={logout}
-                    className="text-decoration-none text-danger fw-bolder mr-4"
-                  >
-                    Logout
-                  </Link>
+                <NavLink
+                  onClick={logout}
+                  className="text-decoration-none text-danger fw-bolder mr-4 pointer"
+                >
+                  Logout
                 </NavLink>
               </NavItem>
-            </>
+            </Fragment>
           ) : (
             <NavItem>
-              <NavLink>
-                <Link className="text-decoration-none text-white" to="/auth">
-                  Login
-                </Link>
-              </NavLink>
+              <Link className="text-decoration-none text-white" to="/auth">
+                Login
+              </Link>
             </NavItem>
           )}
         </Nav>

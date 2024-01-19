@@ -11,12 +11,12 @@ import {
   Input,
   Alert,
 } from "reactstrap";
-import { UserContext } from "../App";
+import { AppContext } from "../App";
 
 const UpdateProfile = ({ sentData, changeUser, changeProfile }) => {
   const fileRef = useRef(null);
   const history = useHistory();
-  const { state, dispatch } = useContext(UserContext);
+  const { dispatch } = useContext(AppContext);
 
   const [visible, setVisible] = useState(false);
   const onDismiss = () => setVisible(false);
@@ -116,6 +116,7 @@ const UpdateProfile = ({ sentData, changeUser, changeProfile }) => {
       .catch((err) => console.log(err));
   };
 
+  // eslint-disable-next-line
   const deleteUser = async () => {
     await fetch("/auth/delete", {
       method: "DELETE",

@@ -1,9 +1,7 @@
-export const initialState = null;
-
-export const reducer = (state, action) => {
+export default (state, action) => {
   const { type, payload } = action;
 
-  if (type === "USER") {
+  if (type === "USER" || type === "UPDATE_PROFILE") {
     return payload;
   }
 
@@ -17,10 +15,6 @@ export const reducer = (state, action) => {
       followers: payload.followers,
       following: payload.following,
     };
-  }
-
-  if (type === "UPDATE_PROFILE") {
-    return payload;
   }
 
   return state;

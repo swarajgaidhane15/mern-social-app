@@ -1,10 +1,12 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
+const cors = require("cors");
 const { dbURI } = require("./config/keys");
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 const authRoutes = require("./routes/auth");
 const postRoutes = require("./routes/post");

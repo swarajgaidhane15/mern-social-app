@@ -1,32 +1,25 @@
-import React, { useEffect, useState } from "react";
-import {
-  Card,
-  CardText,
-  CardBody,
-  CardTitle,
-  Input,
-  Button,
-  Form,
-  CardSubtitle,
-  Dropdown,
-  DropdownMenu,
-  DropdownToggle,
-} from "reactstrap";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Card, CardTitle, Spinner } from "reactstrap";
 
-// import Heart from "react-animated-heart";
-import Comments from "../components/Comments";
+import { AppContext } from "../App";
+import CustomCardBody from "../components/Card/CardBody";
+
+import { likeDislike } from "../utils/posts";
 
 const Home = () => {
-  const [posts, setPosts] = useState([]);
-  const [user] = useState(JSON.parse(localStorage.getItem("user")));
+  const [isPageLoading, setIsPageLoading] = useState(true);
+  const {
+    state: { posts, user },
+    dispatch,
+  } = useContext(AppContext);
 
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const toggleDropdown = () => setDropdownOpen((prevState) => !prevState);
-
-  useEffect(() => getPosts(), [user]);
+  useEffect(() => {
+    getPosts();
+  }, []);
 
   const getPosts = async () => {
+    setIsPageLoading(true);
     await fetch("/post", {
       method: "GET",
       headers: {
@@ -34,43 +27,11 @@ const Home = () => {
       },
     })
       .then((res) => res.json())
-      .then((data) => {
-        setPosts(data.posts);
+      .then(({ posts }) => {
+        dispatch({ type: "FETCH_ALL", payload: posts });
+        setIsPageLoading(false);
       })
       .catch((err) => console.log(err));
-  };
-
-  const likeDislike = async (postId, heart) => {
-    await fetch(`/post/${heart}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "x-auth-token": localStorage.getItem("socio_token"),
-      },
-      body: JSON.stringify({ postId: postId }),
-    })
-      .then((res) => res.json())
-      .then(() => 1)
-      .catch((err) => console.log(err));
-  };
-
-  const addComment = async (text, postId) => {
-    if (text.length > 0) {
-      await fetch("/post/comment", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "x-auth-token": localStorage.getItem("socio_token"),
-        },
-        body: JSON.stringify({
-          text,
-          postId,
-        }),
-      })
-        .then((res) => res.json())
-        .then(() => 1)
-        .catch((err) => console.log(err));
-    }
   };
 
   const deletePost = async (postId) => {
@@ -82,158 +43,88 @@ const Home = () => {
     })
       .then((res) => res.json())
       .then(() => {
-        getPosts();
-        toggleDropdown();
+        dispatch({ type: "DELETE", payload: postId });
       })
       .catch((err) => console.log(err));
   };
+
+  const localLikeDislike = async (postId, action) => {
+    const { result } = await likeDislike(postId, action);
+    dispatch({ type: "UPDATE", payload: { likes: result.likes, id: postId } });
+  };
+
+  if (isPageLoading) {
+    return (
+      <div className="container text-center my-5">
+        <Spinner color="light">Loading...</Spinner>
+      </div>
+    );
+  }
 
   return (
     <div className="container my-5">
       {posts &&
         posts.map((post) => (
-          <div key={post._id}>
-            <div className="col-md-10 col-12 my-4">
-              <Card color="dark" className="p-3">
-                <CardTitle
-                  tag="h4"
-                  color="black"
-                  className="mb-4 fw-bold d-flex justify-content-between align-items-center"
-                >
-                  <div className="d-flex justify-content-start align-items-center">
-                    <img
-                      src={
-                        post.posted_by.profile
-                          ? post.posted_by.profile
-                          : "https://images.unsplash.com/photo-1485423036251-8b2a2909899f?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTl8fHBvcnRyYWl0fGVufDB8MnwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
-                      }
-                      alt=""
-                      className="me-2 border border-white"
-                      style={{
-                        width: "40px",
-                        height: "40px",
-                        borderRadius: "50%",
-                      }}
-                    />
-
-                    <Link
-                      className="text-decoration-none text-white"
-                      to={`/profile/${
-                        post.posted_by._id !== user._id
-                          ? post.posted_by._id
-                          : ""
-                      }`}
-                    >
-                      {post.posted_by.name}
-                    </Link>
-                  </div>
-
-                  {post.posted_by._id === user._id && (
-                    <Dropdown
-                      style={{ cursor: "pointer" }}
-                      direction="left"
-                      isOpen={dropdownOpen}
-                      toggle={toggleDropdown}
-                    >
-                      <DropdownToggle
-                        tag="span"
-                        data-toggle="dropdown"
-                        aria-expanded={dropdownOpen}
-                      >
-                        <i className="fas fa-ellipsis-v"></i>
-                      </DropdownToggle>
-                      <DropdownMenu className="bg-dark text-white border fw-bolder px-2 mt-5">
-                        <div onClick={() => deletePost(post._id)}>Delete</div>
-                      </DropdownMenu>
-                    </Dropdown>
-                  )}
-                </CardTitle>
-                {post.photo ? (
-                  <div className="d-flex justify-content-center">
-                    <img
-                      src={post.photo}
-                      style={{ maxWidth: "100%", maxHeight: "500px" }}
-                      alt="Image"
-                      onDoubleClick={() =>
-                        likeDislike(post._id, post.likes.includes(user._id) ? "dislike" : "like")
-                      }
-                    />
-                  </div>
-                ) : null}
-                <CardBody>
-                  <CardTitle tag="h5">{post.title}</CardTitle>
-                  <CardText className="fs-6" style={{ color: "gray" }}>
-                    {post.body}
-                  </CardText>
-
-                  <div className="d-flex justify-content-between align-items-center">
-                    {/* <Heart
-                      isClick={post.likes.includes(user._id)}
-                      onClick={() =>
-                        likeDislike(post._id, post.likes.includes(user._id))
-                      }
-                    /> */}
-                    {post.likes.includes(user.id) ? (
-                      // <i
-                      //   className="fas fa-2x my-1 fa-heart"
-                      //   style={{ color: "red", cursor: "pointer" }}
-                      //   onClick={() => likeDislike(post._id, "dislike")}
-                      // ></i>
-                      <img
-                        src="/heart-fill.svg"
-                        alt="Liked"
-                        onClick={() => likeDislike(post._id, "dislike")}
-                      />
-                    ) : (
-                      // <i
-                      //   className="far fa-2x my-1 fa-heart"
-                      //   style={{ color: "red", cursor: "pointer" }}
-                      //   onClick={() => likeDislike(post._id, "like")}
-                      // ></i>
-                      <img
-                        src="/heart-outline.svg"
-                        alt="Liked"
-                        onClick={() => likeDislike(post._id, "like")}
-                      />
-                    )}
-
-                    <CardText className="fs-6 mt-2" style={{ color: "gray" }}>
-                      {post.likes.length} likes · {post.comments.length}{" "}
-                      comments
-                    </CardText>
-                  </div>
-
-                  {/* Add Comment */}
-                  <Form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      addComment(e.target[0].value, post._id);
-                      e.target[0].value = "";
+          <div key={post._id} className="col-md-10 col-12 my-4">
+            <Card color="dark" className="card p-3">
+              <CardTitle
+                tag="h4"
+                color="black"
+                className="mb-4 fw-bold d-flex justify-content-between align-items-center"
+              >
+                <div className="d-flex justify-content-start align-items-center">
+                  <img
+                    src={
+                      post.posted_by.profile
+                        ? post.posted_by.profile
+                        : "https://images.unsplash.com/photo-1485423036251-8b2a2909899f?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTl8fHBvcnRyYWl0fGVufDB8MnwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+                    }
+                    alt="Profile"
+                    className="me-2 border border-white"
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      borderRadius: "50%",
                     }}
-                  >
-                    <div className="d-flex justify-content-between align-items-end">
-                      <Input
-                        type="text"
-                        style={inputStyle}
-                        name="comment"
-                        id="comment"
-                        placeholder="Add comment"
-                      />
-                      <Button color="primary">Post</Button>
-                    </div>
-                  </Form>
+                  />
 
-                  {/* Comment */}
-                  <CardSubtitle
-                    className="text-muted mt-4 fs-6"
-                    style={{ cursor: "pointer" }}
+                  <Link
+                    className="text-decoration-none text-white"
+                    to={`/profile/${
+                      post.posted_by._id !== user._id ? post.posted_by._id : ""
+                    }`}
                   >
-                    <Comments comments={post.comments} postId={post._id} />
-                  </CardSubtitle>
-                </CardBody>
-              </Card>
-            </div>
-            <hr width="83.5%" />
+                    {post.posted_by.name}
+                  </Link>
+                </div>
+
+                {post.posted_by._id === user._id && (
+                  <img
+                    className="pointer"
+                    width={20}
+                    src="/bin.svg"
+                    alt="Delete"
+                    onClick={() => deletePost(post._id)}
+                  />
+                )}
+              </CardTitle>
+              {post.photo ? (
+                <div className="d-flex justify-content-center">
+                  <img
+                    src={post.photo}
+                    style={{ maxWidth: "100%", maxHeight: "500px" }}
+                    alt="Failed to load post"
+                    onDoubleClick={() =>
+                      localLikeDislike(
+                        post._id,
+                        post.likes.includes(user._id) ? "dislike" : "like"
+                      )
+                    }
+                  />
+                </div>
+              ) : null}
+              <CustomCardBody post={post} />
+            </Card>
           </div>
         ))}
     </div>
@@ -241,13 +132,3 @@ const Home = () => {
 };
 
 export default Home;
-
-const inputStyle = {
-  border: "none",
-  marginTop: "30px",
-  marginRight: "10px",
-  borderRadius: "1px",
-  borderBottom: "1px solid gray",
-  background: "transparent",
-  color: "white",
-};

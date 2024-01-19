@@ -1,21 +1,21 @@
-import React, { useEffect, useState, useContext } from "react";
-import { Card, CardBody, CardTitle, CardText, Button } from "reactstrap";
+import React, { useEffect, useState } from "react";
+
 import UpdateProfile from "../components/UpdateProfile";
+import UserPosts from "../components/UserPosts";
 
 const Profile = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
   const [profile, setProfile] = useState(
     JSON.parse(localStorage.getItem("user")).profile
   );
-  const [filter, setFilter] = useState(0);
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
     getMyPosts();
-  }, [posts, user]);
+  }, []);
 
-  const getMyPosts = () => {
-    fetch("/post/myposts", {
+  const getMyPosts = async () => {
+    await fetch("/post/myposts", {
       method: "GET",
       headers: {
         "x-auth-token": localStorage.getItem("socio_token"),
@@ -43,7 +43,7 @@ const Profile = () => {
           />
         </div>
         <div className="col-md-6 col-12 p-4">
-          <p className="fw-bolder fs-1 d-flex">
+          <p className="fw-bolder fs-2 d-flex">
             {user.name}
             <UpdateProfile
               sentData={user}
@@ -51,7 +51,7 @@ const Profile = () => {
               changeProfile={setProfile}
             />
           </p>
-          <p className="text-muted fs-5 pb-2">{user.bio}</p>
+          <p className="fs-5 pb-2">{user.bio}</p>
           <div className="d-flex justify-content-between">
             <p className="fw-bold fs-5">{posts && posts.length} posts</p>
             <p className="fw-bold fs-5">{user.followers.length} followers</p>
@@ -59,57 +59,7 @@ const Profile = () => {
           </div>
         </div>
       </div>
-
-      <div className="container mt-4 d-flex border-bottom border-white fw-bolder fs-3">
-        <div
-          onClick={() => setFilter(0)}
-          className="container mb-3 text-center border-end border-white"
-          style={{ cursor: "pointer", color: filter ? "gray" : "white" }}
-        >
-          Images
-        </div>
-
-        <div
-          onClick={() => setFilter(1)}
-          className="container mb-3 text-center"
-          style={{ cursor: "pointer", color: !filter ? "gray" : "white" }}
-        >
-          Tweets
-        </div>
-      </div>
-
-      {/* Posts gallery */}
-      <div className="posts d-flex flex-wrap justify-content-start my-4">
-        {!filter &&
-          posts
-            .filter((post) => post.photo !== "")
-            .map((post) => (
-              <div key={post._id} className="m-4">
-                <img
-                  src={post.photo}
-                  alt={post.title}
-                  style={{ width: "300px", height: "300px" }}
-                />
-              </div>
-            ))}
-      </div>
-
-      {filter &&
-        posts
-          .filter((post) => post.photo === "")
-          .map((post) => (
-            <div key={post._id}>
-              <div className="col-md-10 col-12 my-4">
-                <Card color="dark" className="p-3 border">
-                  <CardBody>
-                    <CardTitle tag="h5">{post.title}</CardTitle>
-                    <CardText className="fs-6">{post.body}</CardText>
-                  </CardBody>
-                </Card>
-              </div>
-              <hr width="83.5%" />
-            </div>
-          ))}
+      <UserPosts posts={posts} />
     </div>
   );
 };

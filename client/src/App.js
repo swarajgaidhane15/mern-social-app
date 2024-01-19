@@ -19,22 +19,26 @@ import Navbar from "./components/Navbar";
 import Home from "./containers/Home";
 import Auth from "./containers/Auth";
 import Profile from "./containers/Profile";
-
-import { initialState, reducer } from "./reducers/userReducer";
 import UserProfile from "./containers/UserProfile";
 import Following_post from "./containers/Following_post";
 
-export const UserContext = createContext();
+import rootReducer from "./reducers";
+
+const initialState = {
+  user: null,
+  posts: [],
+};
+
+export const AppContext = createContext();
 
 const Routing = () => {
   const history = useHistory();
-  const { state, dispatch } = useContext(UserContext);
+  const { dispatch } = useContext(AppContext);
   const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     if (user) {
       dispatch({ type: "USER", payload: user });
-      // history.push("/");
     } else {
       history.push("/auth");
     }
@@ -60,15 +64,15 @@ const Routing = () => {
 };
 
 const App = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(rootReducer, initialState);
 
   return (
-    <UserContext.Provider value={{ state, dispatch }}>
+    <AppContext.Provider value={{ state, dispatch }}>
       <Router>
         <Navbar />
         <Routing />
       </Router>
-    </UserContext.Provider>
+    </AppContext.Provider>
   );
 };
 

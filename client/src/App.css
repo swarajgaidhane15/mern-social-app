@@ -10,6 +10,14 @@
   font-size: 45px;
 }
 
+.card {
+  box-shadow: rgba(255, 255, 255, 0.25) 0px 1px 4px;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
 .close {
   float: right;
   background: transparent !important;

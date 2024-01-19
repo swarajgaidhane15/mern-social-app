@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Button,
   Modal,
@@ -11,12 +11,16 @@ import {
   Alert,
 } from "reactstrap";
 
-const CreatePost = () => {
-  const [visible, setVisible] = useState(false);
-  const onDismiss = () => setVisible(false);
-  const [error, setError] = useState("");
+import { AppContext } from "../App";
 
+const CreatePost = () => {
+  const { dispatch } = useContext(AppContext);
+
+  const [visible, setVisible] = useState(false);
+  const [error, setError] = useState("");
   const [modal, setModal] = useState(false);
+
+  const onDismiss = () => setVisible(false);
   const toggle = () => {
     setFile(null);
     setPost({
@@ -92,6 +96,7 @@ const CreatePost = () => {
       .then((data) => {
         setLoading(false);
         toggle();
+        dispatch({ type: "ADD", payload: data.post });
       })
       .catch((err) => {
         setLoading(false);

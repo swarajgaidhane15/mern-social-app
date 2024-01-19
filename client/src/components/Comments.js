@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useContext, useState } from "react";
 import {
   Button,
   Modal,
@@ -8,40 +8,33 @@ import {
   ModalFooter,
 } from "reactstrap";
 
-const Comments = ({ comments, postId }) => {
-  const [modal, setModal] = useState(false);
-  const toggle = () => setModal(!modal);
+import { AppContext } from "../App";
 
+import { addComment } from "../utils/posts";
+
+const Comments = ({ comments, postId }) => {
+  const { dispatch } = useContext(AppContext);
+
+  const [modal, setModal] = useState(false);
   const [comment, setComment] = useState("");
 
-  const addComment = async () => {
-    await fetch("/post/comment", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "x-auth-token": localStorage.getItem("socio_token"),
-      },
-      body: JSON.stringify({
-        text: comment,
-        postId,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setComment("");
-      })
-      .catch((err) => console.log(err));
+  const isValidComment = comment.trim().length;
+
+  const toggle = () => setModal(!modal);
+
+  const handleAddComment = async () => {
+    const { result } = await addComment(comment, postId);
+    dispatch({
+      type: "UPDATE",
+      payload: { comments: result.comments, id: postId },
+    });
+    setComment("");
   };
 
   return (
-    <div>
-      <Button
-        style={{ backgroundColor: "transparent", border: "none" }}
-        onClick={toggle}
-      >
-        <div className="text-muted fs-6" style={{ cursor: "pointer" }}>
-          View comments
-        </div>
+    <Fragment>
+      <Button color="info" outline className="fs-6" onClick={toggle}>
+        View comments
       </Button>
       <Modal
         className="py-3"
@@ -50,19 +43,19 @@ const Comments = ({ comments, postId }) => {
         toggle={toggle}
       >
         <ModalHeader>
-          <Button color="danger" onClick={toggle}>
+          <Button color="danger" size="sm" onClick={toggle}>
             Close
           </Button>
         </ModalHeader>
         <ModalBody style={{ maxHeight: "60vh", overflow: "scroll" }}>
-          {comments.map((comment) => (
-            <div className="container d-flex align-items-start mb-2">
-              <div className="col-md-3 col-xs-12 fw-bolder fs-6 me-3">
+          {comments.map((comment, idx) => (
+            <div key={idx} className="container d-flex align-items-start mb-2">
+              <p className="col-md-3 col-xs-12 fw-bolder fs-6 me-3">
                 {comment.posted_by ? comment.posted_by.name : null}
-              </div>
-              <div className="col-md-9 col-xs-12 fs-6 mb-2">
+              </p>
+              <p className="col-md-9 col-xs-12 fs-6 mb-2">
                 {comment.posted_by ? comment.text : null}
-              </div>
+              </p>
             </div>
           ))}
         </ModalBody>
@@ -80,13 +73,17 @@ const Comments = ({ comments, postId }) => {
               onChange={(e) => setComment(e.target.value)}
               placeholder="Add comment"
             />
-            <Button disabled={!comment} color="primary" onClick={addComment}>
+            <Button
+              disabled={!isValidComment}
+              color="primary"
+              onClick={handleAddComment}
+            >
               Post
             </Button>
           </div>
         </ModalFooter>
       </Modal>
-    </div>
+    </Fragment>
   );
 };
 

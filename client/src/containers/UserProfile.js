@@ -1,14 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Card, CardBody, CardTitle, CardText, Button } from "reactstrap";
+import { Button } from "reactstrap";
 import { useParams } from "react-router-dom";
 
-import { UserContext } from "../App";
+import { AppContext } from "../App";
+
+import UserPosts from "../components/UserPosts";
 
 const UserProfile = () => {
   const { id } = useParams();
-  const { state, dispatch } = useContext(UserContext);
+  const {
+    state: { user: loggedInUser },
+    dispatch,
+  } = useContext(AppContext);
 
-  const [filter, setFilter] = useState(0);
   const [user, setUser] = useState({});
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -18,7 +22,7 @@ const UserProfile = () => {
 
   useEffect(() => {
     getUserDetails();
-  }, [posts, state]);
+  }, []);
 
   const getUserDetails = async () => {
     await fetch(`/user/${id}`, {
@@ -83,8 +87,8 @@ const UserProfile = () => {
         </div>
         <div className="col-md-6 col-12 p-4">
           <div className="d-flex justify-content-between align-items-center">
-            <p className="fw-bolder fs-1">{user.name}</p>
-            {state && id !== state._id && (
+            <p className="fw-bolder fs-2">{user.name}</p>
+            {loggedInUser && id !== loggedInUser._id && (
               <Button
                 disabled={loading}
                 color="success"
@@ -94,7 +98,7 @@ const UserProfile = () => {
               </Button>
             )}
           </div>
-          <p className="fw-bolder text-muted pb-2">{user.email}</p>
+          <p className="pb-2">{user.email}</p>
           <div className="d-flex justify-content-between">
             <p className="fw-bold fs-5 me-2">{posts.length} posts</p>
             <p className="fw-bold fs-5 me-2">
@@ -107,56 +111,7 @@ const UserProfile = () => {
         </div>
       </div>
 
-      <div className="container mt-4 d-flex border-bottom border-white fw-bolder fs-3">
-        <div
-          onClick={() => setFilter(0)}
-          className="container mb-3 text-center border-end border-white"
-          style={{ cursor: "pointer", color: filter ? "gray" : "white" }}
-        >
-          Images
-        </div>
-
-        <div
-          onClick={() => setFilter(1)}
-          className="container mb-3 text-center"
-          style={{ cursor: "pointer", color: !filter ? "gray" : "white" }}
-        >
-          Tweets
-        </div>
-      </div>
-
-      {/* Posts gallery */}
-      <div className="posts d-flex flex-wrap justify-content-start my-4">
-        {!filter &&
-          posts
-            .filter((post) => post.photo !== "")
-            .map((post) => (
-              <div key={post._id} title={post.title} className="m-4">
-                <img
-                  src={post.photo}
-                  alt={post.title}
-                  style={{ width: "300px", height: "300px" }}
-                />
-              </div>
-            ))}
-      </div>
-
-      {filter &&
-        posts
-          .filter((post) => post.photo === "")
-          .map((post) => (
-            <div key={post._id}>
-              <div className="col-md-10 col-12 my-4">
-                <Card color="dark" className="p-3 border">
-                  <CardBody>
-                    <CardTitle tag="h5">{post.title}</CardTitle>
-                    <CardText className="fs-6">{post.body}</CardText>
-                  </CardBody>
-                </Card>
-              </div>
-              <hr width="83.5%" />
-            </div>
-          ))}
+      <UserPosts posts={posts} />
     </div>
   );
 };
