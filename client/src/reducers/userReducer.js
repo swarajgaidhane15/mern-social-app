@@ -1,15 +1,15 @@
 export default (state, action) => {
   const { type, payload } = action;
 
-  if (type === "USER" || type === "UPDATE_PROFILE") {
+  if (type === "LOGIN" || type === "UPDATE_PROFILE") {
     return payload;
   }
 
-  if (type === "CLEAR") {
+  if (type === "LOGOUT") {
     return null;
   }
 
-  if (type === "UPDATE") {
+  if (type === "FOLLOW_USER") {
     return {
       ...state,
       followers: payload.followers,

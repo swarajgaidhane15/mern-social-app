@@ -65,67 +65,69 @@ const Home = () => {
     <div className="container my-5">
       {posts &&
         posts.map((post) => (
-          <div key={post._id} className="col-md-10 col-12 my-4">
-            <Card color="dark" className="card p-3">
-              <CardTitle
-                tag="h4"
-                color="black"
-                className="mb-4 fw-bold d-flex justify-content-between align-items-center"
-              >
-                <div className="d-flex justify-content-start align-items-center">
-                  <img
-                    src={
-                      post.posted_by.profile
-                        ? post.posted_by.profile
-                        : "https://images.unsplash.com/photo-1485423036251-8b2a2909899f?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTl8fHBvcnRyYWl0fGVufDB8MnwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
-                    }
-                    alt="Profile"
-                    className="me-2 border border-white"
-                    style={{
-                      width: "40px",
-                      height: "40px",
-                      borderRadius: "50%",
-                    }}
-                  />
+          <Card
+            key={post._id}
+            color="dark"
+            className="card col-md-9 col-12 my-4 p-3"
+          >
+            <CardTitle
+              tag="h4"
+              color="black"
+              className="mb-4 fw-bold d-flex justify-content-between align-items-center"
+            >
+              <div className="d-flex justify-content-start align-items-center">
+                <img
+                  src={
+                    post.posted_by.profile
+                      ? post.posted_by.profile
+                      : "https://images.unsplash.com/photo-1485423036251-8b2a2909899f?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTl8fHBvcnRyYWl0fGVufDB8MnwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+                  }
+                  alt="Profile"
+                  className="me-2 border border-white"
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "50%",
+                  }}
+                />
 
-                  <Link
-                    className="text-decoration-none text-white"
-                    to={`/profile/${
-                      post.posted_by._id !== user._id ? post.posted_by._id : ""
-                    }`}
-                  >
-                    {post.posted_by.name}
-                  </Link>
-                </div>
+                <Link
+                  className="text-decoration-none text-white"
+                  to={`/profile/${
+                    post.posted_by._id !== user._id ? post.posted_by._id : ""
+                  }`}
+                >
+                  {post.posted_by.name}
+                </Link>
+              </div>
 
-                {post.posted_by._id === user._id && (
-                  <img
-                    className="pointer"
-                    width={20}
-                    src="/bin.svg"
-                    alt="Delete"
-                    onClick={() => deletePost(post._id)}
-                  />
-                )}
-              </CardTitle>
-              {post.photo ? (
-                <div className="d-flex justify-content-center">
-                  <img
-                    src={post.photo}
-                    style={{ maxWidth: "100%", maxHeight: "500px" }}
-                    alt="Failed to load post"
-                    onDoubleClick={() =>
-                      localLikeDislike(
-                        post._id,
-                        post.likes.includes(user._id) ? "dislike" : "like"
-                      )
-                    }
-                  />
-                </div>
-              ) : null}
-              <CustomCardBody post={post} />
-            </Card>
-          </div>
+              {post.posted_by._id === user._id && (
+                <img
+                  className="pointer"
+                  width={20}
+                  src="/bin.svg"
+                  alt="Delete"
+                  onClick={() => deletePost(post._id)}
+                />
+              )}
+            </CardTitle>
+            {post.photo ? (
+              <div className="d-flex justify-content-center">
+                <img
+                  src={post.photo}
+                  style={{ maxWidth: "100%", maxHeight: "500px" }}
+                  alt="Failed to load post"
+                  onDoubleClick={() =>
+                    localLikeDislike(
+                      post._id,
+                      post.likes.includes(user._id) ? "dislike" : "like"
+                    )
+                  }
+                />
+              </div>
+            ) : null}
+            <CustomCardBody post={post} />
+          </Card>
         ))}
     </div>
   );

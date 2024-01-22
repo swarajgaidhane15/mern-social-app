@@ -39,9 +39,9 @@ const UserProfile = () => {
       .catch((err) => console.log(err));
   };
 
-  const followUnfollow = async (following, count) => {
+  const followUnfollow = async (isFollowing, count) => {
     setLoading(true);
-    await fetch(`/user/${following ? "unfollow" : "follow"}`, {
+    await fetch(`/user/${isFollowing ? "unfollow" : "follow"}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -51,24 +51,23 @@ const UserProfile = () => {
     })
       .then((res) => res.json())
       .then((data) => {
+        getUserDetails();
+        setShowFollow(!isFollowing);
         dispatch({
-          type: "UPDATE",
+          type: "FOLLOW_USER",
           payload: {
             following: data.result.following,
             followers: data.result.followers,
           },
         });
         localStorage.setItem("user", JSON.stringify(data.result));
-        setShowFollow(
-          JSON.parse(localStorage.getItem("user")).following.includes(id)
-        );
 
-        if (count < 1 && following) {
-          followUnfollow(following, count + 1);
-        }
+        // if (count < 1 && isFollowing) {
+        //   followUnfollow(isFollowing, count + 1);
+        // }
         setLoading(false);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err.error));
   };
 
   return (
@@ -86,11 +85,12 @@ const UserProfile = () => {
           />
         </div>
         <div className="col-md-6 col-12 p-4">
-          <div className="d-flex justify-content-between align-items-center">
+          <div className="d-flex justify-content-between align-items-baseline">
             <p className="fw-bolder fs-2">{user.name}</p>
             {loggedInUser && id !== loggedInUser._id && (
               <Button
                 disabled={loading}
+                size="sm"
                 color="success"
                 onClick={() => followUnfollow(showFollow, 0)}
               >
@@ -99,14 +99,14 @@ const UserProfile = () => {
             )}
           </div>
           <p className="pb-2">{user.email}</p>
-          <div className="d-flex justify-content-between">
-            <p className="fw-bold fs-5 me-2">{posts.length} posts</p>
-            <p className="fw-bold fs-5 me-2">
+          <div className="d-flex align-items-center justify-content-between">
+            <span className="fw-bold fs-5 me-2">{posts.length} posts</span>
+            <span className="fw-bold fs-5 me-2">
               {user.followers && user.followers.length} followers
-            </p>
-            <p className="fw-bold fs-5 ">
+            </span>
+            <span className="fw-bold fs-5 ">
               {user.following && user.following.length} following
-            </p>
+            </span>
           </div>
         </div>
       </div>

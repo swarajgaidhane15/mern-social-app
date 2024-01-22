@@ -7,13 +7,14 @@ import {
   NavItem,
   NavLink,
 } from "reactstrap";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import CreatePost from "../components/CreatePost";
 import { AppContext } from "../App";
 
 const NavbarComponent = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
+
   const {
     state: { user },
     dispatch,
@@ -23,11 +24,10 @@ const NavbarComponent = () => {
   const toggle = () => setIsOpen(!isOpen);
 
   const logout = () => {
+    dispatch({ type: "LOGOUT" });
     localStorage.removeItem("socio_token");
     localStorage.removeItem("user");
-    dispatch({ type: "CLEAR" });
-
-    history.push("/auth");
+    navigate("/auth");
   };
 
   return (
@@ -60,7 +60,7 @@ const NavbarComponent = () => {
                   className="text-decoration-none text-white me-4"
                   to="/profile"
                 >
-                  {JSON.parse(localStorage.getItem("user")).name}
+                  {user.name}
                 </Link>
               </NavItem>
 

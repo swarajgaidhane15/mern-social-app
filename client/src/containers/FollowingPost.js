@@ -1,34 +1,20 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
-import {
-  Card,
-  CardTitle,
-  Dropdown,
-  DropdownMenu,
-  DropdownToggle,
-} from "reactstrap";
+import { Card, CardTitle } from "reactstrap";
 
 import { AppContext } from "../App";
 import CustomCardBody from "../components/Card/CardBody";
 
 import { likeDislike } from "../utils/posts";
 
-const Following_post = () => {
-  const [posts, setPosts] = useState([]);
+const FollowingPost = () => {
   const {
-    state: { user },
+    state: { user, following: posts },
+    dispatch,
   } = useContext(AppContext);
-
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const toggleDropdown = () => setDropdownOpen((prevState) => !prevState);
 
   useEffect(() => {
     getPosts();
-
-    return () => {
-      setPosts([]);
-      setDropdownOpen(false);
-    };
   }, []);
 
   const getPosts = async () => {
@@ -40,19 +26,9 @@ const Following_post = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        setPosts(data.posts);
+        dispatch({ type: "FETCH_ALL_FOLLOWING", payload: data.posts });
       })
       .catch((err) => console.log(err));
-  };
-
-  const deletePost = async (postId) => {
-    toggleDropdown();
-    await fetch(`/post/${postId}`, {
-      method: "DELETE",
-      headers: {
-        "x-auth-token": localStorage.getItem("socio_token"),
-      },
-    }).catch((err) => console.log(err));
   };
 
   return (
@@ -71,7 +47,7 @@ const Following_post = () => {
                     src={
                       post.posted_by.profile
                         ? post.posted_by.profile
-                        : "https://images.unsplash.com/photo-1485423036251-8b2a2909899f?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTl8fHBvcnRyYWl0fGVufDB8MnwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+                        : "/default.avif"
                     }
                     alt=""
                     className="me-2 border border-white"
@@ -89,26 +65,6 @@ const Following_post = () => {
                     {post.posted_by.name}
                   </Link>
                 </div>
-
-                {post.posted_by._id === user._id && (
-                  <Dropdown
-                    className="pointer"
-                    direction="left"
-                    isOpen={dropdownOpen}
-                    toggle={toggleDropdown}
-                  >
-                    <DropdownToggle
-                      tag="span"
-                      data-toggle="dropdown"
-                      aria-expanded={dropdownOpen}
-                    >
-                      <i className="fas fa-ellipsis-v"></i>
-                    </DropdownToggle>
-                    <DropdownMenu className="bg-dark text-white border fw-bolder px-2 mt-5">
-                      <div onClick={() => deletePost(post._id)}>Delete</div>
-                    </DropdownMenu>
-                  </Dropdown>
-                )}
               </CardTitle>
               {post.photo ? (
                 <div className="d-flex justify-content-center">
@@ -125,7 +81,7 @@ const Following_post = () => {
                   />
                 </div>
               ) : null}
-              <CustomCardBody post={post} />
+              <CustomCardBody post={post} isFollowingPage />
             </Card>
           </div>
         ))}
@@ -133,4 +89,4 @@ const Following_post = () => {
   );
 };
 
-export default Following_post;
+export default FollowingPost;

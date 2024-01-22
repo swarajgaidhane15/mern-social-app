@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Button,
   Form,
@@ -13,20 +13,23 @@ import {
   CardTitle,
   Alert,
 } from "reactstrap";
+
 import { AppContext } from "../App";
 
 const Auth = () => {
+  const navigate = useNavigate();
+
   const { dispatch } = useContext(AppContext);
-  const history = useHistory();
+
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [response, setResponse] = useState({ error: false, msg: "" });
-
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
-  var uri = "";
-
   const [visible, setVisible] = useState(false);
+
+  let uri = "";
+
   const onDismiss = () => setVisible(false);
 
   const [user, setUser] = useState({
@@ -92,10 +95,8 @@ const Auth = () => {
         if (!data.error) {
           localStorage.setItem("socio_token", data.token);
           localStorage.setItem("user", JSON.stringify(data.user));
-
-          dispatch({ type: "USER", payload: data.user });
-
-          history.push("/");
+          dispatch({ type: "LOGIN", payload: data.user });
+          navigate("/");
         }
         setLoading(false);
       })
@@ -105,7 +106,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="container ">
+    <div className="container">
       <Card
         color="dark"
         className="container col-md-6 mt-5 text-white"
@@ -172,17 +173,30 @@ const Auth = () => {
               <Label htmlFor="password" className="mb-2">
                 Password
               </Label>
-              <Input
-                type={showPassword ? "text" : "password"}
-                style={inputStyle}
-                name="password"
-                id="password"
-                placeholder="Enter password"
-                value={user.password}
-                onChange={onChange}
-              />
+              <div style={{ position: "relative" }}>
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  style={inputStyle}
+                  name="password"
+                  id="password"
+                  placeholder="Enter password"
+                  value={user.password}
+                  onChange={onChange}
+                />
+                <img
+                  style={showPasswordStyles}
+                  tabIndex={0}
+                  src={`/eye-${showPassword ? "open" : "close"}.svg`}
+                  width={20}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      setShowPassword(!showPassword);
+                    }
+                  }}
+                  onClick={() => setShowPassword(!showPassword)}
+                />
+              </div>
               <Label
-                onClick={() => setShowPassword(!showPassword)}
                 className="text-muted float-end pointer mt-1"
                 style={{ fontSize: "12px" }}
               >
@@ -257,4 +271,10 @@ const inputStyle = {
 
 const borderStyle = {
   borderColor: "white",
+};
+
+const showPasswordStyles = {
+  position: "absolute",
+  top: "10px",
+  right: "5px",
 };

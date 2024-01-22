@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, Fragment } from "react";
 import {
   Button,
   Modal,
@@ -19,6 +19,13 @@ const CreatePost = () => {
   const [visible, setVisible] = useState(false);
   const [error, setError] = useState("");
   const [modal, setModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [post, setPost] = useState({
+    title: "",
+    body: "",
+    imageUrl: "",
+  });
+  const [file, setFile] = useState(null);
 
   const onDismiss = () => setVisible(false);
   const toggle = () => {
@@ -31,17 +38,7 @@ const CreatePost = () => {
     setLoading(false);
     setModal(!modal);
   };
-
-  const [loading, setLoading] = useState(false);
-
-  const [post, setPost] = useState({
-    title: "",
-    body: "",
-    imageUrl: "",
-  });
   var uri = "";
-
-  const [file, setFile] = useState(null);
 
   const onChange = (e) => {
     setPost({ ...post, [e.target.name]: e.target.value });
@@ -51,7 +48,7 @@ const CreatePost = () => {
     setLoading(true);
 
     if (!file) {
-      makeRequest();
+      if (post.title) makeRequest();
       return;
     }
 
@@ -98,13 +95,13 @@ const CreatePost = () => {
         toggle();
         dispatch({ type: "ADD", payload: data.post });
       })
-      .catch((err) => {
+      .catch(() => {
         setLoading(false);
       });
   };
 
   return (
-    <div>
+    <Fragment>
       <Button
         className="mx-3"
         style={{ backgroundColor: "transparent", border: "none" }}
@@ -168,12 +165,12 @@ const CreatePost = () => {
           >
             {!loading ? "Add" : "..."}
           </Button>{" "}
-          <Button color="secondary" onClick={toggle}>
+          <Button color="secondary" disabled={loading} onClick={toggle}>
             Cancel
           </Button>
         </ModalFooter>
       </Modal>
-    </div>
+    </Fragment>
   );
 };
 

@@ -13,8 +13,8 @@ export const likeDislike = async (postId, action) => {
       body: JSON.stringify({ postId: postId }),
     });
     return updatedPost.json();
-  } catch (error) {
-    console.log(error.error);
+  } catch (err) {
+    console.log(err.error);
   }
 };
 

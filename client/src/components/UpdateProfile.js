@@ -1,5 +1,5 @@
-import React, { useState, useRef, useContext } from "react";
-import { useHistory } from "react-router";
+import React, { useState, useRef, useContext, Fragment } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Button,
   Modal,
@@ -15,7 +15,7 @@ import { AppContext } from "../App";
 
 const UpdateProfile = ({ sentData, changeUser, changeProfile }) => {
   const fileRef = useRef(null);
-  const history = useHistory();
+  const navigate = useNavigate();
   const { dispatch } = useContext(AppContext);
 
   const [visible, setVisible] = useState(false);
@@ -125,17 +125,17 @@ const UpdateProfile = ({ sentData, changeUser, changeProfile }) => {
       },
     })
       .then((res) => res.json())
-      .then((data) => {
+      .then(() => {
         localStorage.removeItem("user");
         localStorage.removeItem("socio_token");
-        dispatch({ type: "CLEAR" });
-        history.push("/auth");
+        dispatch({ type: "LOGOUT" });
+        navigate("/auth");
       })
       .catch((err) => console.log(err));
   };
 
   return (
-    <div>
+    <Fragment>
       <Button
         className="mx-3"
         style={{ backgroundColor: "transparent", border: "none" }}
@@ -232,7 +232,7 @@ const UpdateProfile = ({ sentData, changeUser, changeProfile }) => {
           </Button>
         </ModalFooter>
       </Modal>
-    </div>
+    </Fragment>
   );
 };
 

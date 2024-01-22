@@ -14,7 +14,7 @@ import Comments from "../Comments";
 import { addComment, likeDislike } from "../../utils/posts";
 import { AppContext } from "../../App";
 
-const Body = ({ post }) => {
+const Body = ({ post, isFollowingPage }) => {
   const {
     state: { user },
     dispatch,
@@ -29,7 +29,7 @@ const Body = ({ post }) => {
     e.preventDefault();
     const { result } = await addComment(comment, post._id);
     dispatch({
-      type: "UPDATE",
+      type: isFollowingPage ? "UPDATE_FOLLOWING" : "UPDATE",
       payload: { comments: result.comments, id: post._id },
     });
     setComment("");
@@ -38,7 +38,7 @@ const Body = ({ post }) => {
   const localLikeDislike = async (action) => {
     const { result } = await likeDislike(post._id, action);
     dispatch({
-      type: "UPDATE",
+      type: isFollowingPage ? "UPDATE_FOLLOWING" : "UPDATE",
       payload: { likes: result.likes, id: post._id },
     });
   };

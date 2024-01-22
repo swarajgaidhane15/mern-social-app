@@ -10,10 +10,10 @@ const UserPosts = ({ posts }) => {
   const [filter, setFilter] = useState(FILTERS.IMAGES);
   return (
     <Fragment>
-      <div className="container mt-4 d-flex fw-bolder fs-3">
+      <div className="d-flex justify-content-center my-4 d-flex fw-bolder fs-5">
         <div
           onClick={() => setFilter(FILTERS.IMAGES)}
-          className="container mb-3 text-center border p-1 pointer"
+          className="text-center border px-5 py-2 pointer"
           style={{
             color: filter === FILTERS.IMAGES ? "gray" : "white",
           }}
@@ -22,7 +22,7 @@ const UserPosts = ({ posts }) => {
         </div>
         <div
           onClick={() => setFilter(FILTERS.TWEETS)}
-          className="container mb-3 text-center border p-1 pointer"
+          className="text-center border px-5 py-2 pointer"
           style={{
             color: filter === FILTERS.TWEETS ? "gray" : "white",
           }}

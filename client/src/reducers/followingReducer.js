@@ -2,16 +2,10 @@ export default (state, action) => {
   const { type, payload } = action;
 
   switch (type) {
-    case "FETCH_ALL":
+    case "FETCH_ALL_FOLLOWING":
       return [...payload];
 
-    case "DELETE":
-      return state.filter((item) => item._id !== payload);
-
-    case "ADD":
-      return [payload, ...state];
-
-    case "UPDATE":
+    case "UPDATE_FOLLOWING":
       return state.map((item) =>
         item._id === payload.id
           ? {

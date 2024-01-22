@@ -8,11 +8,11 @@ import React, {
 import "./App.css";
 
 import {
-  BrowserRouter as Router,
-  Switch,
+  BrowserRouter,
+  Navigate,
+  Routes,
   Route,
-  Redirect,
-  useHistory,
+  useNavigate,
 } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
@@ -20,46 +20,45 @@ import Home from "./containers/Home";
 import Auth from "./containers/Auth";
 import Profile from "./containers/Profile";
 import UserProfile from "./containers/UserProfile";
-import Following_post from "./containers/Following_post";
+import FollowingPost from "./containers/FollowingPost";
 
 import rootReducer from "./reducers";
 
 const initialState = {
   user: null,
   posts: [],
+  following: [],
 };
 
 export const AppContext = createContext();
 
 const Routing = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { dispatch } = useContext(AppContext);
-  const user = JSON.parse(localStorage.getItem("user"));
+  const localUser = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
-    if (user) {
-      dispatch({ type: "USER", payload: user });
+    if (localUser) {
+      dispatch({ type: "LOGIN", payload: localUser });
     } else {
-      history.push("/auth");
+      navigate("/auth");
     }
   }, []);
 
   return (
-    <Switch>
-      {user ? (
+    <Routes>
+      {localUser ? (
         <Fragment>
-          <Route exact path="/" component={Home} />
-          <Route path="/auth" component={Auth} />
-          <Route exact path="/profile" component={Profile} />
-          <Route path="/profile/:id" component={UserProfile} />
-          <Route path="/following/posts" component={Following_post} />
-
-          <Redirect path="**" to="/" />
+          <Route exact path="/" element={<Home />} />
+          <Route exact path="/profile" element={<Profile />} />
+          <Route path="/profile/:id" element={<UserProfile />} />
+          <Route path="/following/posts" element={<FollowingPost />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Fragment>
       ) : (
-        <Route to="/auth" component={Auth} />
+        <Route path="/auth" element={<Auth />} />
       )}
-    </Switch>
+    </Routes>
   );
 };
 
@@ -68,10 +67,10 @@ const App = () => {
 
   return (
     <AppContext.Provider value={{ state, dispatch }}>
-      <Router>
+      <BrowserRouter>
         <Navbar />
         <Routing />
-      </Router>
+      </BrowserRouter>
     </AppContext.Provider>
   );
 };
